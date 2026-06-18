@@ -1,17 +1,11 @@
-
 <?php
-$username = "s2344401";
-$password = "s2344401";
-$database = "d2344401";
-$link = mysqli_connect("127.0.0.1", $username, $password, $database);
-$assid = $_REQUEST["assid"];
-$output=array();
-/* Select queries return a resultset */
-if ($result = mysqli_query($link,"Select * from GROUPS where ASS_ID = $assid")){
-        while ($row=$result->fetch_assoc()){
-                $output[]=$row;
-        }
-}
+require_once 'db_config.php';
+$assid = $_REQUEST["assid"] ?? '';
+$stmt = mysqli_prepare($link, "SELECT * FROM GROUPS WHERE ASS_ID = ?");
+mysqli_stmt_bind_param($stmt, 's', $assid);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
+$output = [];
+while ($row = $result->fetch_assoc()) $output[] = $row;
 mysqli_close($link);
 echo json_encode($output);
-?>
