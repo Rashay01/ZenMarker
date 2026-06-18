@@ -1,18 +1,11 @@
 <?php
-$username = "s2344401";
-$password = "s2344401";
-$database = "d2344401";
-$link = mysqli_connect("127.0.0.1", $username, $password, $database);
-$aname = $_REQUEST["aname"];
-$adesc = $_REQUEST["adesc"];
-$acourse = $_REQUEST["acourse"];
-$lid = $_REQUEST["lid"];
-$sql = "INSERT INTO ASSIGNMENT (ASS_NAME, ASS_DESCRIPTION, ASS_COURSE, LECT_ID) values('$aname', '$adesc','$acourse', $lid)";
-/* Insert into ASSIGNMENT table*/
-if ($r = mysqli_query($link, $sql)) {
-        echo "record added";
-}else {
-        echo "Error: " . $sql . "<br>" . mysqli_error($link);
-}
+require_once 'db_config.php';
+$aname   = $_REQUEST["aname"] ?? '';
+$adesc   = $_REQUEST["adesc"] ?? '';
+$acourse = $_REQUEST["acourse"] ?? '';
+$lid     = $_REQUEST["lid"] ?? '';
+$stmt = mysqli_prepare($link, "INSERT INTO ASSIGNMENT (ASS_NAME, ASS_DESCRIPTION, ASS_COURSE, LECT_ID) VALUES (?, ?, ?, ?)");
+mysqli_stmt_bind_param($stmt, 'ssss', $aname, $adesc, $acourse, $lid);
+if (mysqli_stmt_execute($stmt)) echo "record added";
+else echo "Error: " . mysqli_error($link);
 mysqli_close($link);
-?>

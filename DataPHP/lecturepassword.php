@@ -1,16 +1,11 @@
 <?php
-$username = "s2344401";
-$password = "s2344401";
-$database = "d2344401";
-$link = mysqli_connect("127.0.0.1", $username, $password, $database);
-$ID = $_REQUEST["ID"];
-$output=array();
-/* Select queries return a resultset */
-if ($r = mysqli_query($link, "SELECT * from LECTURER where LECT_ID = '$ID'")) {
-        while ($row=$r->fetch_assoc()){
-                $output[]=$row;
-        }
-}
+require_once 'db_config.php';
+$ID = $_REQUEST["ID"] ?? '';
+$stmt = mysqli_prepare($link, "SELECT * FROM LECTURER WHERE LECT_ID = ?");
+mysqli_stmt_bind_param($stmt, 's', $ID);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
+$output = [];
+while ($row = $result->fetch_assoc()) $output[] = $row;
 mysqli_close($link);
 echo json_encode($output);
-?>

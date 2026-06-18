@@ -1,19 +1,11 @@
-
 <?php
-$username = "s2344401";
-$password = "s2344401";
-$database = "d2344401";
-$link = mysqli_connect("127.0.0.1", $username, $password, $database);
-$gname = $_REQUEST["gname"];
-$gdesc = $_REQUEST["gdesc"];
-$gmark = $_REQUEST["gmark"];
-$assid = $_REQUEST["assid"];
-$sql = "INSERT INTO GROUPS (GROUP_NAME, GROUP_DESCRIPTION, GROUP_MARK, ASS_ID) values('$gname', '$gdesc',$gmark, $assid)";
-/* Insert into GROUPS table*/
-if ($r = mysqli_query($link, $sql)) {
-        echo "record added";
-}else {
-        echo "Error: " . $sql . "<br>" . mysqli_error($link);
-}
+require_once 'db_config.php';
+$gname = $_REQUEST["gname"] ?? '';
+$gdesc = $_REQUEST["gdesc"] ?? '';
+$gmark = $_REQUEST["gmark"] ?? '';
+$assid = $_REQUEST["assid"] ?? '';
+$stmt = mysqli_prepare($link, "INSERT INTO GROUPS (GROUP_NAME, GROUP_DESCRIPTION, GROUP_MARK, ASS_ID) VALUES (?, ?, ?, ?)");
+mysqli_stmt_bind_param($stmt, 'ssss', $gname, $gdesc, $gmark, $assid);
+if (mysqli_stmt_execute($stmt)) echo "record added";
+else echo "Error: " . mysqli_error($link);
 mysqli_close($link);
-?>
